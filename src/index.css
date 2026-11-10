@@ -1,0 +1,560 @@
+@import "tailwindcss";
+
+/* UI redesign W1 (R2): IBM Plex self-hosted beside the app — Sans for the
+ * UI, Mono for timecode / numeric readouts. font-display: swap, system
+ * stack paints first. */
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("./assets/fonts/plex-sans-400.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("./assets/fonts/plex-sans-500.woff2") format("woff2");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("./assets/fonts/plex-sans-600.woff2") format("woff2");
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("./assets/fonts/plex-mono-400.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("./assets/fonts/plex-mono-500.woff2") format("woff2");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+
+@theme {
+  --color-ink: #ececec;
+  --color-silver: #c0c0c0;
+  --color-dim: #a8a8a8;
+  --color-app: #161616;
+  --color-panel: #212121;
+  --color-panel2: #2a2a2a;
+  --color-edge: #3a3a3a;
+  --color-accent: #e31000;
+  --color-track-video: #46586b;
+  --color-track-audio: #476b52;
+  --color-track-text: #75603a;
+  --font-ui: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  background: var(--color-app);
+  color: var(--color-ink);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  overflow: hidden;
+}
+
+* { box-sizing: border-box; }
+button { font-family: var(--font-ui); }
+input, select, textarea { font-family: var(--font-ui); }
+
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-thumb { background: #454545; border-radius: 5px; border: 2px solid #212121; }
+::-webkit-scrollbar-track { background: transparent; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--color-panel2); color: var(--color-ink);
+  border: 1px solid var(--color-edge); border-radius: 6px;
+  padding: 5px 10px; font-size: 12px; cursor: pointer; white-space: nowrap;
+}
+.btn:hover { background: #333; }
+.btn:disabled { opacity: 0.45; cursor: default; }
+.btn.primary { background: var(--color-accent); border-color: #a50d00; color: #fff; font-weight: 600; border-radius: 999px; }
+.btn.pill { border-radius: 999px; }
+.btn.primary:hover { background: #f01400; }
+/* §4.5 standard disabled: a disabled PRIMARY drops to the neutral
+   button surface under the same 0.45 — a disabled Analyse used to
+   sit dark maroon (red at 45% over the app background), reading as
+   broken. */
+.btn.primary:disabled { background: var(--color-panel2); border-color: var(--color-edge); color: var(--color-ink); }
+.btn.small { padding: 3px 7px; font-size: 11px; border-radius: 5px; }
+.btn.icon { padding: 5px 6px; }
+
+.field {
+  background: #1b1b1b; border: 1px solid var(--color-edge); color: var(--color-ink);
+  border-radius: 5px; padding: 4px 6px; font-size: 12px; width: 100%;
+}
+.field:focus { outline: 1px solid var(--color-accent); border-color: var(--color-accent); }
+select.field { width: auto; }
+
+.panel-title {
+  font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--color-dim); font-weight: 700;
+}
+
+.clip-block {
+  position: absolute; top: 4px; bottom: 4px; border-radius: 5px;
+  border: 1px solid rgba(0,0,0,0.55); overflow: hidden; cursor: grab;
+  user-select: none; touch-action: none;
+}
+.clip-block.selected { outline: 2px solid var(--color-accent); outline-offset: -1px; z-index: 5; }
+.clip-block.missing { background: repeating-linear-gradient(45deg, #5a1d1d, #5a1d1d 8px, #471616 8px, #471616 16px) !important; }
+.trim-handle { position: absolute; top: 0; bottom: 0; width: 8px; cursor: ew-resize; z-index: 6; }
+.trim-handle:hover { background: rgba(255,255,255,0.25); }
+/* FIX B2 #25: the canonical offsets B1 had to pin inline in
+   ClipBlock (without them both handles stacked at the clip's left
+   edge and the right handle won every hit). The inline pins stay
+   and agree with these. */
+.trim-handle.left { left: 0; }
+.trim-handle.right { right: 0; }
+
+/* FIX B2 #6: Colour deck columns scroll — give them a visible,
+   always-rendered scrollbar so the scroll is an affordance, not a
+   discovery (wheels/curves continue below the deck fold). */
+.deck-col { scrollbar-width: thin; scrollbar-color: #555 transparent; }
+.deck-col::-webkit-scrollbar { width: 8px; }
+.deck-col::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+.deck-col::-webkit-scrollbar-track { background: transparent; }
+
+/* R3 (UI redesign W3): range sliders — neutral track, silver fill
+   (Firefox progress) and silver thumb; the thumb turns Signal Red
+   only while dragging (:active). The red FILL is gone everywhere. */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  height: 18px;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: #4a4a4a; }
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--color-silver); border: none; margin-top: -4px;
+}
+input[type="range"]:active::-webkit-slider-thumb { background: var(--color-accent); }
+input[type="range"]::-moz-range-track { height: 4px; border-radius: 2px; background: #4a4a4a; }
+input[type="range"]::-moz-range-progress { height: 4px; border-radius: 2px; background: var(--color-silver); }
+input[type="range"]::-moz-range-thumb {
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--color-silver); border: none;
+}
+input[type="range"]:active::-moz-range-thumb { background: var(--color-accent); }
+input[type="range"]:disabled { opacity: 0.45; cursor: default; }
+
+/* R4 (UI redesign W3): one visible keyboard focus system-wide —
+   2 px Signal Red (the palette's loud colour spent where it signals
+   position), 2 px offset. The panel rail and split handle keep
+   their inset variant via their own utility classes. */
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+input, textarea { caret-color: var(--color-accent); }
+
+/* Parked-features motion (plan: 200ms slides, staggered fades, one gentle
+ * pulse — and everything still under prefers-reduced-motion). */
+@keyframes cl-indeterminate {
+  0% { transform: translateX(-110%); }
+  100% { transform: translateX(320%); }
+}
+.cl-progress {
+  position: relative; height: 3px; overflow: hidden;
+  background: #333; border-radius: 2px;
+}
+.cl-progress::after {
+  content: ""; position: absolute; top: 0; bottom: 0; width: 32%;
+  background: var(--color-accent); border-radius: 2px;
+  animation: cl-indeterminate 1.4s ease-in-out infinite;
+}
+@keyframes cl-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.cl-fade-in { animation: cl-fade-in 0.25s ease both; }
+@keyframes cl-chip-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(227, 16, 0, 0.45); }
+  100% { box-shadow: 0 0 0 9px rgba(227, 16, 0, 0); }
+}
+.cl-chip-pulse { animation: cl-chip-pulse 0.9s ease-out 1; }
+@keyframes cl-soft-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+.cl-soft-pulse { animation: cl-soft-pulse 1.6s ease-in-out infinite; }
+/* D1.4: the new segment's edge flashes once after a number-key angle cut. */
+@keyframes cl-edge-flash {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+.cl-edge-flash { animation: cl-edge-flash 150ms ease-out 1 both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cl-progress::after, .cl-fade-in, .cl-chip-pulse, .cl-soft-pulse, .cl-edge-flash { animation: none; }
+}
+
+.narrow .tb-wordmark { display: none; }
+.narrow .tb-name { min-width: 0 !important; }
+
+/* §5 narrow (<900 px): touch targets + phone TopBar essentials. */
+.narrow .tb-optional { display: none; }
+.narrow .btn { min-height: 32px; }
+.narrow .btn.small { min-height: 32px; }
+.narrow input[type='checkbox'], .narrow input[type='radio'] { width: 18px; height: 18px; }
+.narrow .tb-wordmark { display: none; }
+.narrow .tb-name { min-width: 0 !important; }
+
+.tb-combined { display: none; }
+.narrow .tb-combined { display: block; }
+.narrow .tb-menus { display: none; }
+.narrow .tb-savetext { display: none; }
+
+/* ================================================================
+   AUTH REDESIGN 2026-11-06 — split-layout sign-in (AuthModal.tsx).
+   P1 charcoal, Signal Red the only accent, IBM Plex in the form,
+   Fraunces for the brand wordmark (the landing's display face;
+   Georgia is the in-app fallback — Fraunces is not bundled with
+   the editor). The brand panel's base is the landing start page's
+   timeline horizon, same motif and proportions. No gradients
+   beyond the start page's own charcoal vignette, no glass, no orbs.
+   ================================================================ */
+.auth-overlay {
+  position: fixed; inset: 0; z-index: 40;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(6, 6, 6, 0.66); padding: 16px;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+.auth-card {
+  position: relative; display: flex; width: 880px; max-width: 94vw;
+  max-height: calc(100dvh - 32px);
+  background: rgba(33, 33, 33, 0.88); border: 1px solid rgba(192, 192, 192, 0.16);
+  -webkit-backdrop-filter: blur(18px) saturate(1.08); backdrop-filter: blur(18px) saturate(1.08);
+  border-radius: 22px; overflow: hidden;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.6), 0 4px 20px rgba(0, 0, 0, 0.4);
+  animation: auth-in 0.18s ease both;
+}
+@keyframes auth-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .auth-card { animation: none; }
+  .auth-spinner { animation: none; }
+}
+.auth-close {
+  position: absolute; top: 12px; right: 12px; z-index: 6;
+  width: 32px; height: 32px; display: grid; place-items: center;
+  background: transparent; border: none; border-radius: 8px;
+  color: var(--color-dim); cursor: pointer;
+}
+.auth-close:hover { background: var(--color-panel2); color: #fff; }
+
+/* Brand panel */
+.auth-brand {
+  position: relative; flex: none; width: 338px;
+  display: flex; flex-direction: column;
+  padding: 30px 30px 118px;
+  background: radial-gradient(130% 90% at 30% 20%, #1e1e1e 0%, #141414 58%, #101010 100%);
+  border-right: 1px solid #2c2c2c; overflow: hidden;
+}
+.auth-brand-top { display: flex; align-items: center; gap: 11px; }
+.auth-brand-top img { display: block; }
+.auth-wordmark {
+  font-family: "Fraunces", Georgia, "Times New Roman", serif;
+  font-weight: 600; font-size: 27px; letter-spacing: 0.01em; color: #fff; line-height: 1;
+}
+.auth-brand-line {
+  margin: auto 0 0; padding-top: 40px;
+  font-size: 21px; line-height: 1.4; font-weight: 500; color: #ececec; max-width: 15em;
+}
+.auth-brand-beta {
+  margin-top: 12px; font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: #8f8f8f;
+}
+/* Timeline horizon (the landing start page's base, .sp-base family) */
+.auth-horizon {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 92px;
+  border-top: 1px solid #2c2c2c; overflow: hidden;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.015), rgba(0, 0, 0, 0.35));
+}
+.auth-horizon-line {
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(to right,
+    rgba(192, 192, 192, 0) 0%, rgba(192, 192, 192, 0.22) 28%,
+    rgba(227, 16, 0, 0.85) 56%, rgba(227, 16, 0, 0.95) 60%, rgba(227, 16, 0, 0.85) 64%,
+    rgba(192, 192, 192, 0.22) 76%, rgba(192, 192, 192, 0) 100%);
+}
+.auth-horizon-ruler {
+  position: absolute; top: 9px; left: 0; right: 0; height: 11px;
+  background-image: repeating-linear-gradient(to right, rgba(192, 192, 192, 0.35) 0 1px, transparent 1px 52px);
+  border-bottom: 1px solid rgba(192, 192, 192, 0.14);
+}
+.auth-horizon-clips {
+  position: absolute; left: 0; right: 0; bottom: 13px;
+  display: flex; gap: 5px; padding: 0 10px;
+}
+.auth-horizon-clip {
+  display: block; height: 38px; flex: none;
+  border-radius: 6px; background: #2a2a2a; border: 1px solid #3a3a3a;
+}
+.auth-horizon-clip.alt { background: #232323; }
+.auth-horizon-playhead {
+  position: absolute; top: 0; bottom: 0; left: 60%; width: 2px;
+  background: var(--color-accent); box-shadow: 0 0 12px rgba(227, 16, 0, 0.7);
+}
+.auth-horizon-playhead::before {
+  content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  border: 6px solid transparent; border-top: 9px solid var(--color-accent);
+}
+.auth-horizon-glow {
+  position: absolute; top: -6px; left: 50%; transform: translateX(-50%);
+  width: 260px; height: 100px; pointer-events: none;
+  background: radial-gradient(50% 50% at 50% 42%, rgba(227, 16, 0, 0.28) 0%, rgba(227, 16, 0, 0.09) 45%, rgba(227, 16, 0, 0) 72%);
+}
+
+/* Form panel */
+.auth-form {
+  flex: 1 1 auto; min-width: 0; overflow-y: auto;
+  padding: 32px 34px 26px;
+  display: flex; flex-direction: column;
+}
+.auth-title { margin: 0; font-size: 22px; font-weight: 600; line-height: 1.2; color: #fff; }
+.auth-sub { margin: 8px 0 22px; font-size: 13px; line-height: 1.55; color: var(--color-dim); }
+.auth-oauth-row { display: flex; flex-direction: column; gap: 10px; }
+.auth-oauth {
+  display: flex; align-items: center; width: 100%; height: 45px; padding: 0 14px;
+  background: var(--color-panel2); border: 1px solid var(--color-edge); border-radius: 8px;
+  color: var(--color-ink); font-size: 13.5px; font-weight: 500; cursor: pointer;
+}
+.auth-oauth:hover:not(:disabled) { background: #333; border-color: #4a4a4a; }
+.auth-oauth:disabled { opacity: 0.55; cursor: default; }
+.auth-oauth-glyph { flex: none; width: 22px; display: grid; place-items: center; color: #ececec; }
+.auth-oauth-label { flex: 1; text-align: center; padding-right: 22px; }
+.auth-divider {
+  display: flex; align-items: center; gap: 12px; margin: 18px 0 16px;
+  font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-dim);
+}
+.auth-divider-line { height: 1px; flex: 1; background: var(--color-edge); }
+.auth-field { margin-bottom: 8px; }
+/* Fixed-height slot under every field: the validation line renders
+   into space that already exists, so showing an error never moves
+   anything below it (no layout shift under the pointer). */
+.auth-field-err-slot { min-height: 22px; }
+.auth-label { display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: var(--color-silver); }
+.auth-input {
+  width: 100%; height: 44px; padding: 0 12px;
+  background: #1b1b1b; border: 1px solid var(--color-edge); border-radius: 8px;
+  color: var(--color-ink); font-size: 14px;
+}
+.auth-input::placeholder { color: #6f6f6f; }
+.auth-input:focus { outline: 1px solid var(--color-accent); border-color: var(--color-accent); }
+.auth-input[aria-invalid="true"] { border-color: #c93a2e; }
+.auth-input[aria-invalid="true"]:focus { outline-color: #c93a2e; }
+.auth-pw-wrap { position: relative; }
+.auth-input-pw { padding-right: 44px; }
+.auth-eye {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  width: 32px; height: 32px; display: grid; place-items: center;
+  background: transparent; border: none; border-radius: 6px;
+  color: var(--color-dim); cursor: pointer;
+}
+.auth-eye:hover { background: var(--color-panel2); color: #fff; }
+.auth-field-err { margin: 4px 0 0; font-size: 12px; line-height: 1.45; color: #ff8a7a; }
+.auth-forgot-row { display: flex; justify-content: flex-end; margin-top: 8px; }
+.auth-alert {
+  display: flex; gap: 9px; align-items: flex-start;
+  margin: 2px 0 14px; padding: 11px 12px;
+  background: #33150f; border: 1px solid #7a2a1e; border-radius: 8px;
+  font-size: 12.5px; line-height: 1.5; color: #ffd9d2;
+}
+.auth-alert-icon { flex: none; margin-top: 1px; color: #ff8a7a; }
+.auth-notebox {
+  margin: 2px 0 14px; padding: 11px 12px;
+  background: #26261a; border: 1px solid #4d4423; border-radius: 8px;
+  font-size: 12.5px; line-height: 1.55; color: #e8dfae;
+}
+.auth-primary {
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  width: 100%; height: 45px; margin-top: 4px;
+  background: var(--color-accent); border: 1px solid #a50d00; border-radius: 999px;
+  color: #fff; font-size: 14px; font-weight: 600; cursor: pointer;
+}
+.auth-primary:hover:not(:disabled) { background: #f01400; }
+/* Disabled primary follows the app's §4.5 standard (neutral surface at
+   full opacity via colour, not the old dead grey-on-grey). */
+.auth-primary:disabled {
+  background: var(--color-panel2); border-color: var(--color-edge);
+  color: #8f8f8f; cursor: not-allowed;
+}
+.auth-spinner {
+  width: 15px; height: 15px; flex: none; border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35); border-top-color: #fff;
+  animation: auth-spin 0.7s linear infinite;
+}
+@keyframes auth-spin { to { transform: rotate(360deg); } }
+.auth-switch { margin: 16px 0 0; text-align: center; font-size: 12.5px; color: var(--color-dim); }
+.auth-link {
+  background: none; border: none; padding: 0; cursor: pointer;
+  font: inherit; color: var(--color-ink); font-weight: 500;
+  text-decoration: underline; text-decoration-color: var(--color-accent);
+  text-underline-offset: 3px;
+}
+.auth-link:hover { color: #fff; }
+.auth-link-small { font-size: 12px; font-weight: 400; }
+.auth-fineprint { margin: 12px 0 0; text-align: center; font-size: 11.5px; line-height: 1.5; color: #8f8f8f; }
+
+/* Narrow: brand panel becomes a slim header band; the timeline
+   horizon survives as a thin strip under it. Form fully usable. */
+@media (max-width: 720px) {
+  .auth-overlay { padding: 10px; }
+  .auth-card { flex-direction: column; max-height: calc(100dvh - 20px); }
+  .auth-brand {
+    width: auto; padding: 14px 18px 20px;
+    border-right: none; border-bottom: 1px solid #2c2c2c;
+  }
+  .auth-brand-top img { width: 26px; height: 26px; }
+  .auth-wordmark { font-size: 21px; }
+  .auth-brand-line { display: none; }
+  .auth-brand-beta { display: none; }
+  .auth-horizon { height: 8px; }
+  .auth-horizon-ruler, .auth-horizon-clips { display: none; }
+  .auth-form { padding: 22px 20px 20px; }
+  .auth-title { font-size: 20px; }
+  .auth-oauth, .auth-primary, .auth-input { height: 46px; }
+}
+
+/* ================================================================
+   FIX A — CHROME 2026-11-06 (TopBar zones, viewer strip, timeline
+   toolbar). P1 charcoal, Signal Red stays the bar's only filled
+   item (Export). Bar buttons are ghost/flat — grouping is shown
+   by dividers and space, never pill backgrounds (research §5.1).
+   ================================================================ */
+/* D2 guard: the unlayered `.btn{display:inline-flex}` above used to
+   beat Tailwind's layered `hidden` utility, so a `.btn.hidden …`
+   element rendered anyway (the old settings gear showed at every
+   width). This unlayered, higher-specificity rule restores `hidden`
+   for any button that carries both classes, wherever the pattern
+   recurs. (The gear itself left the bar in FIX A.) */
+.btn.hidden { display: none; }
+
+.tb-ghost {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: transparent; color: var(--color-silver);
+  border: 1px solid transparent; border-radius: 6px;
+  padding: 3px 8px; font-size: 12px; cursor: pointer; white-space: nowrap;
+}
+.tb-ghost:hover { background: var(--color-panel2); color: #fff; }
+.tb-ghost:disabled { opacity: 0.45; cursor: default; }
+
+.tb-icon-btn {
+  display: grid; place-items: center; flex: none;
+  width: 28px; height: 28px; padding: 0;
+  background: transparent; color: var(--color-silver);
+  border: 1px solid transparent; border-radius: 6px; cursor: pointer;
+}
+.tb-icon-btn:hover { background: var(--color-panel2); color: #fff; }
+.tb-icon-btn:disabled { opacity: 0.45; cursor: default; }
+.tb-icon-btn:disabled:hover { background: transparent; color: var(--color-silver); }
+
+.tb-avatar-btn {
+  display: grid; place-items: center; flex: none;
+  width: 28px; height: 28px; padding: 0; border-radius: 50%;
+  background: var(--color-panel2); color: var(--color-ink);
+  border: 1px solid var(--color-edge);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+}
+.tb-avatar-btn:hover { border-color: #555; color: #fff; }
+
+.tb-divider { width: 1px; height: 18px; flex: none; background: var(--color-edge); }
+
+/* Project name in the bar: quiet until touched — transparent field,
+   500-weight, truncates via its flex basis (first in the
+   degradation order). */
+.field.tb-name {
+  background: transparent; border-color: transparent;
+  font-weight: 500; text-overflow: ellipsis;
+}
+.field.tb-name:hover { background: #1b1b1b; border-color: var(--color-edge); }
+.field.tb-name:focus { background: #1b1b1b; }
+
+/* D5: the timeline toolbar is ONE row — groups never wrap; the row
+   scrolls horizontally when the timeline column is too narrow, so
+   no control is ever lost or pushed off-edge. */
+.tl-toolbar { scrollbar-width: thin; }
+.tl-toolbar > * { flex: none; }
+.tl-toolbar::-webkit-scrollbar { height: 6px; }
+.tl-toolbar::-webkit-scrollbar-thumb { background: #454545; border: none; }
+
+/* D3: the viewer strip's condensed "View" dropdown — its controls
+   go full-width rows inside the panel. */
+.viewer-menu-panel .btn { width: 100%; justify-content: flex-start; }
+.viewer-menu-panel select.field { width: 100%; }
+
+/* ================================================================
+   FIX C — HOME 2026-11-06: the display wordmark (Home header +
+   first-run). Same face stack as the auth brand panel — Fraunces
+   where the landing has loaded it, Georgia in the editor bundle.
+   ================================================================ */
+.wordmark {
+  font-family: "Fraunces", Georgia, "Times New Roman", serif;
+  font-weight: 600; letter-spacing: 0.01em;
+}
+
+/* TIMELINE SECTION 2026-11-06: the toolbar's groups are indivisible
+   clusters inside the one scrolling row — a cluster never splits
+   across the scroll edge; the row scrolls between clusters instead.
+   The View cluster carries margin-left:auto in the markup, so it
+   pins to the right whenever the row fits and simply takes its
+   place at the end when the row scrolls (auto margins resolve to
+   0 under overflow). */
+.tl-cluster { display: inline-flex; align-items: center; gap: 6px; flex: none; }
+.tl-cluster > * { flex: none; }
+
+/* ================================================================
+   UI ADOPTION 2026-11-06 — glass modal surface + the segmented /
+   checkbox primitives (values studied from the Antigravity
+   remake's modals and SegmentedToggle; implementation ours).
+   Modal grammar: the page behind BLURS and darkens
+   (rgba(6,6,6,.66) + 6px blur); panels are translucent charcoal
+   glass (rgba(33,33,33,.88) + 18px blur), hairline silver border
+   (rgba(192,192,192,.16)), radius 22px, one deep soft shadow.
+   Buttons inside a modal panel are standalone actions, so they
+   take the pill geometry (the editor's dense chrome keeps its
+   square .btn — grouping there is shown by dividers, FIX A).
+   ================================================================ */
+.modal-overlay {
+  background: rgba(6, 6, 6, 0.66);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+.modal-panel {
+  background: rgba(33, 33, 33, 0.88);
+  -webkit-backdrop-filter: blur(18px) saturate(1.08); backdrop-filter: blur(18px) saturate(1.08);
+  border: 1px solid rgba(192, 192, 192, 0.16);
+  border-radius: 22px;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.6), 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+.modal-panel .btn { border-radius: 999px; }
+
+/* SegmentedToggle: the red segment travels on the house spring
+   (the Study-Home switch curve); reduced motion = no travel. */
+.seg-thumb {
+  transition: transform 0.38s cubic-bezier(0.6, -0.1, 0.2, 1.25), width 0.38s cubic-bezier(0.6, -0.1, 0.2, 1.25);
+}
+@media (prefers-reduced-motion: reduce) {
+  .seg-thumb { transition: none; }
+}
+
+/* CheckboxRow: hairline rule under every row but the list's last. */
+.checkbox-row { border-bottom: 1px solid #2d2d2d; }
+.checkbox-row:last-child { border-bottom: none; }
+
+/* HOME PORT 2026-11-06: prompt-bar attach chips mount with the
+   remake's fade/rise (his PromptHero used AnimatePresence; a CSS
+   mount animation carries the same beat without a motion dep). */
+@keyframes home-chip-in {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.home-chip-in { animation: home-chip-in 0.18s ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  .home-chip-in { animation: none; }
+}
