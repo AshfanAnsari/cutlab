@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CutLab MCP: agent control documentation</title>
+<meta name="description" content="Documentation for the CutLab MCP server: connect your own chat with a connect token, then edit, grade, caption and render CutLab projects through the full tool vocabulary, groups A to J.">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<style>
+  :root{
+    --bg:#FAF7F1; --surface:#FFFFFF; --ink:#1C1917; --body:#292524;
+    --secondary:#57534E; --muted:#78716C; --hairline:#E7E0D4;
+    --accent:#E31000; --accent-dark:#B50D00; --code-bg:#F1EBE0;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--body);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    font-size:16.5px;line-height:1.65}
+  a{color:var(--ink);text-decoration-color:rgba(227,16,0,.55);text-underline-offset:3px}
+  a:hover{color:#000;text-decoration-color:var(--accent)}
+  a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+  header.site{border-bottom:1px solid var(--hairline);background:var(--bg)}
+  header.site .wrap{display:flex;align-items:center;gap:28px;padding-top:16px;padding-bottom:16px;flex-wrap:wrap}
+  .brand{font-family:Georgia,"Times New Roman",serif;font-weight:600;font-size:22px;color:var(--ink);text-decoration:none}
+  nav.main{margin-left:auto;display:flex;gap:22px;font-size:15px;flex-wrap:wrap}
+  nav.main a{color:var(--secondary);text-decoration:none}
+  nav.main a:hover{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent)}
+  nav.main a.btn{color:#fff}
+  .btn{display:inline-block;padding:9px 18px;border-radius:999px;border:1px solid var(--accent);
+    background:var(--accent);color:#fff;font-weight:600;font-size:15px;text-decoration:none}
+  .btn:hover{background:var(--accent-dark);border-color:var(--accent-dark);color:#fff}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",serif;font-weight:600;line-height:1.2;color:var(--ink)}
+  h1{font-size:clamp(32px,5vw,46px);margin:0 0 16px}
+  h2{font-size:27px;margin:44px 0 12px}
+  h3{font-size:19px;margin:28px 0 8px}
+  .eyebrow{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--accent);margin:0 0 14px}
+  .lede{font-size:19px;color:var(--secondary);max-width:40em;margin:0 0 8px}
+  .page-head{padding:44px 0 4px}
+  .crumb{font-size:14px;color:var(--muted);margin:0 0 14px}
+  .crumb a{color:var(--muted)}
+  .layout{display:grid;grid-template-columns:210px 1fr;gap:40px;align-items:start;padding-bottom:24px}
+  nav.toc{position:sticky;top:20px;font-size:14.5px}
+  nav.toc p{font-family:ui-monospace,Consolas,monospace;font-size:12px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+  nav.toc a{display:block;padding:4px 0;color:var(--secondary);text-decoration:none}
+  nav.toc a:hover{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent)}
+  main{min-width:0}
+  main p,main li{max-width:44em}
+  ol,ul{padding-left:24px}
+  li{margin-bottom:7px}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:.9em;background:var(--code-bg);
+    padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+  pre{background:var(--code-bg);border:1px solid var(--hairline);border-radius:6px;
+    padding:14px 16px;overflow-x:auto;white-space:pre-wrap;overflow-wrap:anywhere;
+    font-size:13.5px;line-height:1.55}
+  pre code{background:none;padding:0}
+  .note{border-left:3px solid var(--accent);padding:4px 0 4px 16px;margin:20px 0;color:var(--secondary)}
+  table{border-collapse:collapse;width:100%;margin:14px 0 26px;background:var(--surface);font-size:15px}
+  th,td{text-align:left;padding:9px 12px;border:1px solid var(--hairline);vertical-align:top}
+  th{font-family:ui-monospace,Consolas,monospace;font-size:12px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--muted);font-weight:500}
+  td:first-child{font-family:ui-monospace,Consolas,monospace;font-size:13.5px;white-space:nowrap}
+  td{font-variant-numeric:tabular-nums}
+  footer.site{border-top:1px solid var(--hairline);margin-top:32px}
+  footer.site .wrap{display:flex;flex-wrap:wrap;gap:10px 28px;align-items:baseline;
+    padding-top:22px;padding-bottom:30px;font-size:14px;color:var(--muted)}
+  footer.site nav{display:flex;gap:20px;margin-left:auto;flex-wrap:wrap}
+  footer.site a{color:var(--muted)}
+  footer.site a:hover{color:var(--ink)}
+  @media (max-width:760px){
+    .layout{grid-template-columns:1fr}
+    nav.toc{position:static}
+    td:first-child{white-space:normal}
+  }
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="./">CutLab</a>
+    <nav class="main" aria-label="Main">
+      <a href="landing/help/">Help</a>
+      <a href="changelog.html">Changelog</a>
+      <a href="landing/legal/privacy.html">Privacy</a>
+      <a class="btn" href="./">Open the editor</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="page-head">
+    <p class="crumb"><a href="./">CutLab</a> / MCP documentation</p>
+    <p class="eyebrow">Model Context Protocol</p>
+    <h1>The CutLab MCP: your agent can edit, not just render</h1>
+    <p class="lede">
+      CutLab is a video editor that runs in the browser. Its MCP server lets an AI
+      assistant you already use work on your projects directly: building timelines,
+      grading, captioning, queueing renders, and rendering on its own machine.
+      You connect your chat, never an API key. <strong>100% of the engine is
+      agent-callable — zero UI-only features:</strong> every edit the editor can
+      make, from a trim to the full grade object, is exposed as a tool. Other
+      editors count commands; CutLab exposes the whole engine.
+    </p>
+  </div>
+
+  <div class="layout">
+    <nav class="toc" aria-label="On this page">
+      <p>On this page</p>
+      <a href="#overview">Overview</a>
+      <a href="#connect">Connect</a>
+      <a href="#tools">Tool reference A–J</a>
+      <a href="#render-lane">The render lane</a>
+      <a href="#guardrails">Guardrails</a>
+      <a href="#why">Why it is different</a>
+      <a href="#limits">Limits</a>
+    </nav>
+
+    <main>
+      <h2 id="overview">Overview</h2>
+      <p>
+        The honest starting point: CutLab's rendering engine has always been deep.
+        The project schema defines around 140 fields across five clip types, the
+        grade object alone carries around 60 addressable parameters, and counting
+        keyframes, effects and export options the renderer honours roughly 200
+        parameters and operations. For a long time an agent could reach almost
+        none of it. The first MCP release exposed exactly seven tools, and not one
+        of them could edit anything: they listed projects and ran the render lane.
+      </p>
+      <p>
+        The Agent Control release closes that gap. The MCP now exposes the full
+        editing vocabulary over the engine that already exists, in ten tool groups
+        (A–J below): project, media, timeline, transform, effects, colour, text,
+        audio, analysis jobs, and export. Every write is validated against the
+        same strict project schema the editor itself uses before it lands, and
+        every agent mutation is recorded in the project's edit log.
+      </p>
+      <p class="note">
+        Release note: this page documents the Agent Control surface. The seven
+        original render-lane tools are listed by name in
+        <a href="#render-lane">The render lane</a>. If your MCP client lists only
+        those seven, your relay is still on the earlier release and the editing
+        groups have not reached it yet.
+      </p>
+
+      <h2 id="connect">Connect</h2>
+      <p>
+        The connection is a personal connect token, issued by the app and scoped
+        to your account. There is no API key and no separate billing anywhere in
+        the flow.
+      </p>
+      <ol>
+        <li>Open the <a href="./">editor</a> and sign in. The token registers under your account, so sign-in comes first.</li>
+        <li>Open <strong>Settings</strong> and scroll to the <strong>Connections</strong> section.</li>
+        <li>Choose <strong>Generate new token</strong>. The token starts with <code>clt_</code>. The relay stores only a hash of it, never the token itself.</li>
+        <li>Add the server to your MCP client with the endpoint and the token as a Bearer header (snippet below).</li>
+        <li>Ask your agent to list your projects. A working connection answers with your projects and nothing else's.</li>
+      </ol>
+      <p>Endpoint:</p>
+      <pre><code>https://hjdyvaetxhvxzgsdlibt.supabase.co/functions/v1/cutlab-mcp</code></pre>
+      <p>Generic MCP client configuration:</p>
+      <pre><code>{
+  "mcpServers": {
+    "cutlab": {
+      "url": "https://hjdyvaetxhvxzgsdlibt.supabase.co/functions/v1/cutlab-mcp",
+      "headers": {
+        "Authorization": "Bearer clt_REPLACE_WITH_YOUR_TOKEN"
+      }
+    }
+  }
+}</code></pre>
+      <p>
+        The server speaks stateless MCP over JSON-RPC 2.0 (protocol version
+        2025-03-26): <code>initialize</code>, <code>tools/list</code> and
+        <code>tools/call</code>, with every call authenticated independently.
+        A plain HTTP smoke test looks like this:
+      </p>
+      <pre><code>curl -s -X POST https://hjdyvaetxhvxzgsdlibt.supabase.co/functions/v1/cutlab-mcp \
+  -H "Authorization: Bearer clt_REPLACE_WITH_YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}'
+# expect: result.serverInfo.name = "cutlab-mcp"</code></pre>
+      <p>
+        Treat the token like a password. Revoke it in the same Connections
+        section whenever you stop using an assistant; the relay refuses a
+        revoked token from that moment. Background on the token model is in the
+        help page <a href="landing/help/connect-your-ai.html">Connect your AI</a>.
+      </p>
+
+      <h2 id="tools">Tool reference: groups A–J</h2>
+      <p>
+        Names below are the tool names exactly as the server lists them. Tools
+        marked <em>render lane</em> predate this release and are unchanged.
+      </p>
+
+      <h3>A. Project</h3>
+      <table>
+        <tr><th>Tool</th><th>What it does</th></tr>
+        <tr><td>list_my_projects</td><td>List your projects (id, name, last updated). Render lane, unchanged.</td></tr>
+        <tr><td>get_project</td><td>Fetch one project's full project JSON, the exact document the renderer consumes. Render lane, unchanged.</td></tr>
+        <tr><td>get_project_summary</td><td>Cheap planning read: tracks, clips, duration and media, without the full JSON.</td></tr>
+        <tr><td>create_project</td><td>Create a project with a name and canvas (width, height, fps).</td></tr>
+        <tr><td>update_project</td><td>Replace a whole project document, schema-validated before it lands.</td></tr>
+        <tr><td>apply_edit_operations</td><td>Apply an ordered batch of the operations below in one round trip.</td></tr>
+        <tr><td>duplicate_project</td><td>Copy a project under your account.</td></tr>
+        <tr><td>rename_project</td><td>Rename a project.</td></tr>
+        <tr><td>delete_project</td><td>Delete a project.</td></tr>
+        <tr><td>set_canvas</td><td>Change canvas size and frame rate.</td></tr>
+        <tr><td>set_timeline_range</td><td>Set the timeline in/out range used by ranged exports.</td></tr>
+        <tr><td>add_marker</td><td>Add a timeline marker, including beat-grid markers.</td></tr>
+        <tr><td>remove_marker</td><td>Remove a marker.</td></tr>
+        <tr><td>list_markers</td><td>List a project's markers.</td></tr>
+      </table>
+
+      <h3>B. Media</h3>
+      <table>
+        <tr><th>Tool</th><th>What it does</th></tr>
+        <tr><td>list_media</td><td>List a project's media registry.</td></tr>
+        <tr><td>request_media_upload</td><td>Get a signed upload URL into the project scope, so an agent can add media at all.</td></tr>
+        <tr><td>register_media</td><td>Register an uploaded file in the project from its probe result.</td></tr>
+        <tr><td>remove_media</td><td>Remove a media entry from the registry.</td></tr>
+        <tr><td>get_media_links</td><td>Time-limited download URLs for a job's input files. Render lane, unchanged.</td></tr>
+        <tr><td>analyse_media</td><td>Queue a media-analysis job: proxies, thumbnails and waveform peaks.</td></tr>
+        <tr><td>create_bin</td><td>Create a media bin in the project.</td></tr>
+        <tr><td>move_media_to_bin</td><td>Move a media entry into a bin.</td></tr>
+      </table>
+
+      <h3>C. Timeline and clips</h3>
+      <table>
+        <tr><th>Tool</th><th>What it does</th></tr>
+        <tr><td>add_track</td><td>Add a track to the timeline.</td></tr>
+        <tr><td>remove_track</td><td>Remove a track.</td></tr>
+        <tr><td>set_track_flags</td><td>Set mute, solo, lock, hide, bus and track volume.</td></tr>
+        <tr><td>add_clip</td><td>Place a clip on a track.</td></tr>
+        <tr><td>remove_clip</td><td>Remove a clip.</td></tr>
+        <tr><td>move_clip</td><td>Move a clip in time or across tracks.</td></tr>
+        <tr><td>trim_clip</td><td>Trim a clip's in point, out point or start.</td></tr>
+        <tr><td>split_clip</td><td>Split a clip at a point.</td></tr>
+        <tr><td>duplicate_clip</td><td>Duplicate a clip.</td></tr>
+        <tr><td>set_clip_timing</td><td>Speed, speed-ramp keys, reverse, freeze frame, pitch preserve and smooth slow motion.</td></tr>
+        <tr><td>link_clips</td><td>Link clips so they move together.</td></tr>
+        <tr><td>unlink_clips</td><td>Unlink clips.</td></tr>
+        <tr><td>make_compound</td><td>Nest selected clips into a compound clip.</td></tr>
+        <tr><td>uncompound</td><td>Unnest a compound clip.</td></tr>
+        <tr><td>add_adjustment_clip</td><td>Add an adjustment clip over a range.</td></tr>
+        <tr><td>set_active_angle</td><td>Set the active angle of a multicam clip.</td></tr>
+        <tr><td>cut_to_angle</td><td>Cut to another multicam angle at the playhead.</td></tr>
+      </table>
+
+      <h3>D. Transform and animation</h3>
+      <table>
+        <tr><th>Tool</th><th>What it does</th></tr>
+        <tr><td>set_transform</td><td>Position, scale, rotation and opacity.</td></tr>
+        <tr><td>add_keyframe</td><td>Add a keyframe (property, time, value, easing including bezier handles and hold).</td></tr>
+        <tr><td>remove_keyframe</td><td>Remove a keyframe.</td></tr>
+        <tr><td>list_keyframes</td><td>List a clip's keyframes.</td></tr>
+        <tr><td>set_crop</td><td>Crop with soft edges.</td></tr>
+        <tr><td>set_blend_mode</td><td>Set one of the seven blend modes.</td></tr>
+        <tr><td>set_flip</td><td>Flip horizontal or vertical.</td></tr>
+        <tr><td>set_fit</td><td>Cover fit or blur-fill fit.</td></tr>
+        <tr><td>set_mask</td><td>Mask shape (rect, circle, linear, pen points), geometry, feather and invert.</td></tr>
+        <tr><td>set_chroma_key</td><td>Chroma key colour, intensity, shadow and spill controls.</td></tr>
+        <tr><td>set_matte</td><td>Matte-driven alpha from another clip.</td></tr>
+      </table>
+
+      <h3>E. Effects and transitions</h3>
+      <table>
+        <tr><th>Tool</th><th>What it does</th></tr>
+        <tr><td>add_effect</td><td>Add one of the 13 effects: brightness, contrast, saturation, blur, glow, sharpen, vignette, tv-lines, haze, wide-angle, motion-blur, relight, turbulent-displace.</td></tr>
+        <tr><td>update_effect</td><td>Change an effect's values, including relight light placement.</td></tr>
+        <tr><td>remove_effect</td><td>Remove an effect from the stack.</td></tr>
+        <tr><td>set_transition</td><td>Set one of the 11 transitions (cut, dissolve, flash, glare, slide, shake, blur-pulse, zoom, flip, invert-flash, mask-wipe) with direction and duration.</td></tr>
+      </table>
+
+      <h3>F. Colour</h3>
+      <table>
+        <tr><th>Tool</th><th>What it does</th></tr>
+        <tr><td>set_grade_layer</td><td>Write a full grade object: primaries, lift/gamma/gain/offset wheels, curves, hue curves and HSL.</td></tr>
+        <tr><td>add_grade_layer</td><td>Add a grade layer; grades stack serially, up to three per clip.</td></tr>
+        <tr><td>remove_grade_layer</td><td>Remove a grade layer.</td></tr>
+        <tr><td>set_qualifier_key</td><td>Qualifier key: HSV or luma range selection with softness.</td></tr>
+        <tr><td>set_lut</td><td>Apply a LUT by id, with strength.</td></tr>
+        <tr><td>list_luts</td><td>List available LUTs.</td></tr>
+        <tr><td>upload_lut</td><td>Upload a .cube LUT.</td></tr>
+        <tr><td>set_project_look</td><td>Set the project-wide look that sits on top of clip grades.</td></tr>
+        <tr><td>grab_still</td><td>Render one frame as a still and return a signed URL, so the agent can see its own grade before committing to a render.</td></tr>
+      </table>
+
+      <h3>G. Text and captions</h3>
+      <table>
+        <tr><th>Tool</th><th>What it does</th></tr>
+        <tr><td>add_text</td><td>Add a text clip.</td></tr>
+        <tr><td>update_text</td><td>Change a text clip's content and timing.</td></tr>
+        <tr><td>remove_text</td><td>Remove a text clip.</td></tr>
+        <tr><td>set_text_style</td><td>Font, weight, size, colour, stroke, shadow, glow, background plate, arc curve, spacing and per-word highlight.</td></tr>
+        <tr><td>apply_text_preset</td><td>Apply a saved text style preset.</td></tr>
+        <tr><td>save_text_preset</td><td>Save the current style as a preset.</td></tr>
+        <tr><td>set_text_animation</td><td>In, out and loop animation with durations (six in/out animations, four loop modes).</td></tr>
+        <tr><td>captions_from_transcription</td><td>Turn a transcription job's word timings into text clips on a text track.</td></tr>
+      </table>
+
+      <h3>H. Audio</h3>
+      <table>
+        <tr><th>Tool</th><th>What it does</th></tr>
+        <tr><td>set_clip_volume</td><td>Set a clip's volume.</td></tr>
+        <tr><td>set_volume_keyframes</td><td>Write volume keyframes over time.</td></tr>
+        <tr><td>set_fades</td><td>Set audio or video fades.</td></tr>
+        <tr><td>set_pan</td><td>Set stereo pan.</td></tr>
+        <tr><td>set_eq</td><td>Six-band parametric EQ.</td></tr>
+        <tr><td>set_denoise</td><td>Set clip denoise.</td></tr>
+        <tr><td>set_voice_fx</td><td>Voice effects: echo and hall.</td></tr>
+        <tr><td>separate_voice</td><td>Queue a voice-separation job (demucs) and set the voice-isolation override and strength.</td></tr>
+        <tr><td>set_audio_bus</td><td>Master gain, loudness normalise, dialogue compressor and sidechain ducking.</td></tr>
+      </table>
+
+      <h3>I. Analysis and AI jobs</h3>
+      <table>
+        <tr><th>Tool</th><th>What it does</th></tr>
+        <tr><td>transcribe</td><td>Queue transcription with word timings.</td></tr>
+        <tr><td>detect_beats</td><td>Detect BPM and write beat markers.</td></tr>
+        <tr><td>track_region</td><td>Track a seed region into keyframes; also feeds mask-follow and smart reframe.</td></tr>
+        <tr><td>compute_reframe</td><td>Compute a tracked 9:16 subject path for vertical export.</td></tr>
+        <tr><td>replicate_analyse</td><td>Analyse a reference video against your raw clips into a cut spec and BPM.</td></tr>
+        <tr><td>prompt_edit</td><td>Queue a natural-language prompt edit: your instruction becomes a validated revised project, as a job you can poll.</td></tr>
+      </table>
+
+      <h3>J. Jobs and export</h3>
+      <table>
+        <tr><th>Tool</th><th>What it does</th></tr>
+        <tr><td>queue_render</td><td>Queue a render with the full export surface: container, codec, size, fps, CRF or bitrate, in/out range, also-formats, polish denoise and grain, reframe, output name, and execution lane (server or agent).</td></tr>
+        <tr><td>queue_job</td><td>Queue any of the server job types: render, media-analysis, transcribe, track, separate, prompt_edit, replicate_analyse.</td></tr>
+        <tr><td>get_job</td><td>Read one job's status, result or structured error.</td></tr>
+        <tr><td>list_jobs</td><td>List your jobs.</td></tr>
+        <tr><td>cancel_job</td><td>Cancel a queued job.</td></tr>
+        <tr><td>get_output_links</td><td>Signed download links for a finished job's outputs.</td></tr>
+        <tr><td>list_waiting_render_jobs</td><td>Render jobs queued for your agent. Render lane, unchanged; see below.</td></tr>
+        <tr><td>claim_render_job</td><td>Claim one waiting render job. Render lane, unchanged; see below.</td></tr>
+        <tr><td>complete_render_job</td><td>Mark a claimed render done. Render lane, unchanged; see below.</td></tr>
+        <tr><td>fail_render_job</td><td>Mark a claimed render failed, with the reason. Render lane, unchanged; see below.</td></tr>
+      </table>
+
+      <h2 id="render-lane">The render lane</h2>
+      <p>
+        Editing and rendering are two different jobs, and the MCP keeps them
+        separate. The render lane is how an agent renders a job on its own
+        machine with the CutLab renderer package. Its seven original tools are:
+        <code>list_my_projects</code>, <code>get_project</code>,
+        <code>get_media_links</code>, <code>list_waiting_render_jobs</code>,
+        <code>claim_render_job</code>, <code>complete_render_job</code> and
+        <code>fail_render_job</code>. The flow:
+      </p>
+      <ol>
+        <li><strong>List.</strong> <code>list_waiting_render_jobs</code> returns renders queued for your agent (execution lane <code>agent</code>). The CutLab server never touches these.</li>
+        <li><strong>Claim.</strong> <code>claim_render_job</code> takes one job under a one-hour lease and returns the job payload plus signed upload URLs for the finished files. Only the claiming token can complete or fail the job.</li>
+        <li><strong>Fetch.</strong> <code>get_project</code> returns the project JSON; <code>get_media_links</code> returns time-limited download URLs for every input file.</li>
+        <li><strong>Render.</strong> Render locally with the CutLab renderer package, exactly what the job specifies.</li>
+        <li><strong>Complete.</strong> Upload each output to its signed URL, then call <code>complete_render_job</code>. The relay reads the real file sizes back from storage. If anything fails, call <code>fail_render_job</code> with the reason instead of abandoning the job.</li>
+      </ol>
+      <p>
+        Finished renders, on either lane, come back with verification: the
+        probe facts for the file and sampled frame grabs, so the requester can
+        check what actually landed instead of trusting a status flag.
+      </p>
+
+      <h2 id="guardrails">Guardrails</h2>
+      <ul>
+        <li><strong>Per-account scoping.</strong> Every call is authenticated with your connect token. Only its SHA-256 hash is looked up; the account on that row scopes every query. There is no parameter that widens it, and a token only ever sees its own account's projects, jobs and storage.</li>
+        <li><strong>Validated writes.</strong> Every agent write is checked against the strict project schema before it lands. An invalid edit is refused, not saved and repaired later.</li>
+        <li><strong>No silent stomping.</strong> Writes carry the project's revision. A stale write, based on an older copy than the current one, is refused.</li>
+        <li><strong>Edit log.</strong> Every agent mutation is appended to the project's edit log, so agent edits stay inspectable and reversible alongside your own.</li>
+        <li><strong>Media registry discipline.</strong> The media registry changes only through the media tools in group B, never as a side effect of a timeline operation.</li>
+        <li><strong>Quotas unchanged.</strong> Relay limits are the same for agents as for the app: 50 MB per file and 200 MB per user, enforced in the database and re-checked when a job is claimed.</li>
+        <li><strong>Claim ownership.</strong> A claimed render job can only be completed or failed by the token that claimed it, and only while it is running.</li>
+      </ul>
+
+      <h2 id="why">Why it is different</h2>
+      <p>
+        <strong>Your chat, not your API key.</strong> The agent that edits for you
+        is the assistant you already have a conversation with. CutLab never asks
+        for an AI provider's API key and sells no credits; the connect token is
+        the whole arrangement, and you can revoke it at any time.
+      </p>
+      <p>
+        <strong>Web, zero install.</strong> The editor runs in any browser and
+        renders on the server or on your agent's machine. A modest computer only
+        ever runs the interface. Originals stay on your machine; the relay moves
+        only the job bundles a render needs.
+      </p>
+      <p>
+        <strong>Verified renders.</strong> An agent can check its own work:
+        <code>grab_still</code> shows it a frame before a render is queued, and
+        finished renders return probe facts and frame grabs. Failed renders
+        return structured, stage-level errors instead of a bare failure.
+      </p>
+      <p>
+        <strong>The same vocabulary everywhere.</strong> The live control channel
+        that drives the open editor speaks the same operation names as this MCP,
+        so an agent can work on a cloud project or drive the app in front of you
+        without learning a second dialect.
+      </p>
+
+      <h2 id="limits">Limits</h2>
+      <ul>
+        <li>Relay storage quotas: 50 MB per file, 200 MB per user. Originals are not required to live on the relay; they stay on your machine until a job needs them.</li>
+        <li>Delivery formats are MP4 and MOV (H.264 and H.265), the formats CutLab's creators publish in. Pro delivery codecs are deliberately out of scope.</li>
+        <li>Only an assistant that can run code on a machine can take render-lane jobs. A chat that only talks can still edit projects and queue server renders.</li>
+        <li>CutLab is in beta. The changelog records what shipped and when: <a href="changelog.html">Changelog</a>.</li>
+      </ul>
+    </main>
+  </div>
+</div>
+
+<footer class="site">
+  <div class="wrap">
+    <span>CutLab, a browser video editor in beta.</span>
+    <nav aria-label="Legal">
+      <a href="landing/legal/terms.html">Terms</a>
+      <a href="landing/legal/privacy.html">Privacy</a>
+      <a href="landing/legal/content-policy.html">Content policy</a>
+      <a href="changelog.html">Changelog</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>

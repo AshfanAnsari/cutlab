@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Changelog: CutLab</title>
+<meta name="description" content="CutLab changelog: the Agent Control release of 9 November 2026, and the shipped history before it: the public surface, Bring Your Own Muse, accounts and lockdown, and the editor itself.">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<style>
+  :root{
+    --bg:#FAF7F1; --surface:#FFFFFF; --ink:#1C1917; --body:#292524;
+    --secondary:#57534E; --muted:#78716C; --hairline:#E7E0D4;
+    --accent:#E31000; --accent-dark:#B50D00; --code-bg:#F1EBE0;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--body);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    font-size:16.5px;line-height:1.65}
+  a{color:var(--ink);text-decoration-color:rgba(227,16,0,.55);text-underline-offset:3px}
+  a:hover{color:#000;text-decoration-color:var(--accent)}
+  a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+  header.site{border-bottom:1px solid var(--hairline);background:var(--bg)}
+  header.site .wrap{display:flex;align-items:center;gap:28px;padding-top:16px;padding-bottom:16px;flex-wrap:wrap}
+  .brand{font-family:Georgia,"Times New Roman",serif;font-weight:600;font-size:22px;color:var(--ink);text-decoration:none}
+  nav.main{margin-left:auto;display:flex;gap:22px;font-size:15px;flex-wrap:wrap}
+  nav.main a{color:var(--secondary);text-decoration:none}
+  nav.main a:hover{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent)}
+  nav.main a.btn{color:#fff}
+  .btn{display:inline-block;padding:9px 18px;border-radius:999px;border:1px solid var(--accent);
+    background:var(--accent);color:#fff;font-weight:600;font-size:15px;text-decoration:none}
+  .btn:hover{background:var(--accent-dark);border-color:var(--accent-dark);color:#fff}
+  h1,h2{font-family:Georgia,"Times New Roman",serif;font-weight:600;line-height:1.2;color:var(--ink)}
+  h1{font-size:clamp(32px,5vw,46px);margin:0 0 16px}
+  h2{font-size:26px;margin:0 0 10px}
+  .eyebrow{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--accent);margin:0 0 14px}
+  .lede{font-size:19px;color:var(--secondary);max-width:40em;margin:0}
+  .page-head{padding:44px 0 8px}
+  .crumb{font-size:14px;color:var(--muted);margin:0 0 14px}
+  .crumb a{color:var(--muted)}
+  .prose{max-width:68ch;padding-bottom:24px}
+  .prose p,.prose li{max-width:44em}
+  ul{padding-left:24px}
+  li{margin-bottom:7px}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:.9em;background:var(--code-bg);
+    padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+  .entry{border-top:1px solid var(--hairline);padding:30px 0 8px;margin-top:30px}
+  .entry:first-of-type{border-top:none;margin-top:8px}
+  .date{font-family:ui-monospace,Consolas,monospace;font-size:13px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+  footer.site{border-top:1px solid var(--hairline);margin-top:32px}
+  footer.site .wrap{display:flex;flex-wrap:wrap;gap:10px 28px;align-items:baseline;
+    padding-top:22px;padding-bottom:30px;font-size:14px;color:var(--muted)}
+  footer.site nav{display:flex;gap:20px;margin-left:auto;flex-wrap:wrap}
+  footer.site a{color:var(--muted)}
+  footer.site a:hover{color:var(--ink)}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="./">CutLab</a>
+    <nav class="main" aria-label="Main">
+      <a href="landing/help/">Help</a>
+      <a href="mcp-docs.html">MCP docs</a>
+      <a href="landing/legal/privacy.html">Privacy</a>
+      <a class="btn" href="./">Open the editor</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap prose">
+  <div class="page-head">
+    <p class="crumb"><a href="./">CutLab</a> / Changelog</p>
+    <p class="eyebrow">Changelog</p>
+    <h1>What shipped, and when</h1>
+    <p class="lede">
+      CutLab is in beta and changes in the open. This page records the releases
+      as they landed, newest first. The MCP tool reference lives in the
+      <a href="mcp-docs.html">MCP documentation</a>.
+    </p>
+  </div>
+
+  <section class="entry">
+    <p class="date">9 November 2026</p>
+    <h2>The Agent Control release</h2>
+    <p>
+      The MCP stops being a render-only relay and becomes the full control
+      surface for the editor. Until this release an agent could list projects
+      and render queued jobs, seven tools in total, and could not change a
+      single edit. Now the whole engine is agent-callable:
+    </p>
+    <ul>
+      <li><strong>100% of the engine.</strong> Every edit CutLab can make — clip, grade, effects, captions, export — is callable through MCP. Zero UI-only features: if the interface can do it, your agent can too.</li>
+      <li><strong>Full MCP vocabulary.</strong> Ten tool groups, A–J: project operations and batch edits, media upload and registry, timeline and clip operations, transform and keyframes, effects and transitions, the full grade object with LUTs and qualifier key, text and captions, audio including voice separation, analysis and AI jobs, and the complete export surface. Every write is schema-validated, revision-checked against stale copies, and recorded in the project's edit log.</li>
+      <li><strong>Live-channel parity.</strong> The control channel that drives the open editor speaks the same vocabulary as the MCP, with live preview feedback while you watch: the same operation names work on a cloud project or on the app in front of you.</li>
+      <li><strong>Delivery and interchange.</strong> Caption export (SRT and VTT) straight from transcription word timings, still and cover export as a first-class job, a GIF export preset, loudness target presets on the audio bus, and EDL/XML export of the timeline.</li>
+      <li><strong>Render verification.</strong> Every finished render returns its probe facts and sampled frame grabs to whoever asked for it, agent or UI. Failed renders return structured, stage-level errors, and a failed render gets one automatic retry with its inputs warmed.</li>
+      <li><strong>Seeing the grade.</strong> A new <code>grab_still</code> tool renders a single frame to a signed URL, so an agent can look at its own colour work before queueing a full render.</li>
+    </ul>
+  </section>
+
+  <section class="entry">
+    <p class="date">6 November 2026</p>
+    <h2>Editor redesign and the public surface</h2>
+    <ul>
+      <li><strong>UI redesign.</strong> The editor was rebuilt surface by surface: foundations and fonts, viewer, accent and focus system, page skeleton, top bar and timeline, media page, inspector and prompt panel, colour page, audio page, deliver page and the narrow layout, closing with a local mirror of the finished design.</li>
+      <li><strong>Landing rebuild.</strong> A new start page for the public site, with the demo film of the editor as it ships.</li>
+      <li><strong>Auth redesign.</strong> A split-layout sign-in, and the forgot-password flow the old modal never had.</li>
+      <li><strong>Home port.</strong> The workspace Home (prompt bar, quick ways in, recent sequences, cloud projects) became the editor's front door.</li>
+      <li><strong>Theme unification.</strong> Help and legal pages brought onto the same public theme as the landing.</li>
+    </ul>
+  </section>
+
+  <section class="entry">
+    <p class="date">5 November 2026</p>
+    <h2>Phase 3: the public surface</h2>
+    <ul>
+      <li><strong>Account dashboard.</strong> Your projects and versions, a storage meter against the real 200 MB quota, job history with lane markers, connect token labels, change password, and Export my data: everything the relay holds for you, as a download.</li>
+      <li><strong>Delete account.</strong> A self-serve function that sweeps your storage, removes your rows across the relay tables and deletes the login, in an order that leaves the account retryable if a step fails.</li>
+      <li><strong>Landing and help.</strong> The public site: landing page, a help index and four help pages (connect your AI, render with your Muse, files and quotas, export and delete), written under the house anti-slop rules with real screenshots of the shipped app.</li>
+      <li><strong>Legal pages.</strong> Terms, privacy and content policy, drafted for the data flows as they actually work: the shared login, relay storage, renders on your own machine, prompt-lane flows, token hashes only.</li>
+      <li><strong>Support and operations.</strong> In-app feedback, a relay health check, and table backups with an integrity check and a restore drill artifact.</li>
+      <li>Deployed and accepted the same day, including the feedback migration going live.</li>
+    </ul>
+  </section>
+
+  <section class="entry">
+    <p class="date">5 November 2026</p>
+    <h2>Phase 2: Bring Your Own Muse</h2>
+    <ul>
+      <li><strong>The MCP connector.</strong> The first MCP release: seven tools that let your own assistant find renders queued for it, claim one under a one-hour lease, fetch the project and media, render it locally and upload the result. Authentication is the <code>clt_</code> connect token; only its hash is stored, and every query is scoped to its account.</li>
+      <li><strong>Lane split.</strong> Render jobs carry an execution lane, server or agent. The server worker provably never claims agent-lane jobs.</li>
+      <li><strong>Portable renderer package.</strong> The renderer ships as a standalone package (version 1.0.0, then 1.0.1), byte-identical to the server's own renderer, with an agent brief covering the whole claim-to-complete protocol. Hosted publicly so an agent can fetch it itself.</li>
+      <li><strong>Client.</strong> The export panel gained the Render with choice: CutLab server or your own Muse.</li>
+    </ul>
+  </section>
+
+  <section class="entry">
+    <p class="date">4 November 2026</p>
+    <h2>Phase 1: lockdown and accounts, on a working editor</h2>
+    <ul>
+      <li><strong>Accounts.</strong> Email sign-in and sign-up, plus Google and GitHub OAuth. Sessions persist and refresh; an auth failure never blocks local editing.</li>
+      <li><strong>Owner-only relay.</strong> Every relay table and file scoped to its account and enforced by the database itself, with the quotas that still stand today: 50 MB per file, 200 MB per user. Signed-out local editing is untouched by design.</li>
+      <li><strong>Jarvis control, owner-gated.</strong> Remote control of cloud projects, gated to the owner account in three places, with connect tokens registered to an account.</li>
+      <li><strong>Live control.</strong> A command channel through the relay that drives the open editor: open a project, add and trim clips, set volume, add text, save, queue jobs and renders, take preview snapshots.</li>
+      <li><strong>The editor underneath.</strong> By this point the editor and its server renderer were already verified end to end: five clip types, keyframed animation, masks and chroma key, a Premiere-class grade object with wheels, curves, HSL and LUTs, multicam with audio-synced angle cutting, voice isolation, smart reframe, transcription with word timings, object tracking, beat detection, prompt editing and replicate-an-edit, all honouring one project document that preview and render share.</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <span>CutLab, a browser video editor in beta.</span>
+    <nav aria-label="Legal">
+      <a href="landing/legal/terms.html">Terms</a>
+      <a href="landing/legal/privacy.html">Privacy</a>
+      <a href="landing/legal/content-policy.html">Content policy</a>
+      <a href="mcp-docs.html">MCP docs</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
