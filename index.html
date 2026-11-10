@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CutLab — video editor</title>
+    <!-- FIX C boot splash: inline on purpose — it must paint from the
+         HTML alone, before the JS bundle arrives, so first paint is
+         the brand on the app ground (#161616), never a bare dark
+         field or a white flash. No spinner, no progress bar: the
+         mark + wordmark simply hold until the app mounts, then
+         main.tsx fades this out. -->
+    <style>
+      html { background: #161616; }
+      #boot-splash {
+        position: fixed; inset: 0; z-index: 9999;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+        background: #161616;
+        transition: opacity 0.35s ease;
+      }
+      #boot-splash.done { opacity: 0; pointer-events: none; }
+      #boot-splash img { width: 64px; height: 64px; display: block; }
+      #boot-splash .boot-word {
+        font-family: "Fraunces", Georgia, "Times New Roman", serif;
+        font-size: 30px; font-weight: 600; letter-spacing: 0.01em; color: #ececec; line-height: 1;
+      }
+      @media (prefers-reduced-motion: reduce) { #boot-splash { transition: none; } }
+    </style>
+  </head>
+  <body>
+    <div id="boot-splash" aria-hidden="true">
+      <img src="/favicon-512.png" alt="" />
+      <span class="boot-word">CutLab</span>
+    </div>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

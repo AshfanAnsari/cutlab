@@ -1,0 +1,14 @@
+node_modules/
+dist/
+dist-ssr*/
+.env
+.env.*
+!.env.example
+__pycache__/
+*.pyc
+*.log
+*.zip
+renders/
+*.mp4
+*.mov
+.DS_Store
