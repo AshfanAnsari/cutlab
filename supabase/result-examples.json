@@ -1,0 +1,112 @@
+{
+ "_note": "Result shapes for cutlab_jobs.result. media-analysis and the original render entry were captured from live probe jobs on 2026-11-04 (IST). The v2 entries (render with alsoFormats + measurements, transcribe, track, separate) are the contracts implemented by the Lane B parity pass (server/worker.py + job scripts, 2026-11-04); separate currently resolves to the error shape until demucs is installed. The v3 entries (prompt_edit, replicate_analyse) are the contracts implemented by the parked-features pass (server/worker.py + prompt_edit_job.py / replicate_job.py, 2026-11-04); both need supabase/jobs-v3-migration.sql before the relay accepts the job types.",
+ "media-analysis": {
+  "_reading": "Manifest paths (proxy/thumb/peaks/beats) are relative to outputPrefix inside the cutlab bucket. Full path = outputPrefix + manifest path. An item whose job.json requests include 'beats' gains a beats path (analysis/<stem>.beats.json = {bpm, beats: [{t, tier}]}); on lane failure beats is null and beatsError explains.",
+  "result": {
+   "manifest": {
+    "items": {
+     "P1_playful_handface.mp4": {
+      "peaks": "analysis/P1_playful_handface.peaks.json",
+      "proxy": "proxies/P1_playful_handface.proxy.mp4",
+      "proxyHasAudio": true,
+      "thumb": "thumbs/P1_playful_handface.thumb.jpg"
+     }
+    },
+    "version": 1
+   },
+   "outputPrefix": "jobs/707a6c40-50d6-4cef-9190-6c7cb7adb167/output/"
+  }
+ },
+ "render": {
+  "_reading": "outputs lists EVERY produced file, main render first; alsoFormats appear as kind 'also-format' with their ratio. measurements carries the loudnorm readings (premix + final output, LUFS / true peak dB). timings is the compositing-vs-encode breakdown.",
+  "result": {
+   "measurements": {
+    "output_lufs": -14.14,
+    "output_true_peak": -2.46,
+    "premix_lufs": -14.05,
+    "premix_true_peak": -2.4
+   },
+   "outputs": [
+    {
+     "bytes": 7518804,
+     "kind": "render",
+     "path": "jobs/fc82cb66-73ee-4022-86fd-c24f581612a9/output/render.mp4"
+    },
+    {
+     "bytes": 3902211,
+     "format": "1:1",
+     "kind": "also-format",
+     "path": "jobs/fc82cb66-73ee-4022-86fd-c24f581612a9/output/render_1x1.mp4"
+    }
+   ],
+   "timings": {
+    "compositing_pct": 95.6,
+    "compositing_s": 280.1,
+    "cpu_cores_available": 4,
+    "effective_cores_used": 1.05,
+    "encode_pct": 3.2,
+    "encode_s": 9.4,
+    "wall_s": 293.0
+   }
+  }
+ },
+ "separate": {
+  "_error": "vocal separation unavailable on this server: demucs is not installed (no local free lane). Install with: pip install demucs (about 2 GB incl. torch), then re-queue.",
+  "_reading": "Success shape (demucs installed): per-src stem paths under the job output prefix. TODAY the lane is unavailable, so the job instead ends status 'failed' with error = the clear reason (see _error).",
+  "result": {
+   "items": {
+    "song.mp3": {
+     "noVocals": "jobs/<job_id>/output/no_vocals/song.wav",
+     "vocals": "jobs/<job_id>/output/vocals/song.wav"
+    }
+   }
+  }
+ },
+ "track": {
+  "_reading": "keyframesPath points at keyframes.json ({keyframes: [{t, x, y}]} \u2014 t clip-local seconds, x/y canvas-px transform offsets). keyframes is inlined when there are <= 120 points. lost counts frames where the tracker held the last position.",
+  "result": {
+   "count": 42,
+   "keyframes": [
+    {
+     "t": 0.0,
+     "x": 12.0,
+     "y": -40.5
+    }
+   ],
+   "keyframesPath": "jobs/<job_id>/output/keyframes.json",
+   "lost": 3,
+   "method": "TrackerCSRT",
+   "tracked": 371
+  }
+ },
+ "transcribe": {
+  "_reading": "captions points at the uploaded captions.json ({items: {src: {language, segments: [{start, end, text, words: [{w, t0, t1}]}]}}}); items here is the per-src summary.",
+  "result": {
+   "captions": "jobs/<job_id>/output/captions.json",
+   "items": {
+    "speech.mp4": {
+     "language": "hi",
+     "segments": 12
+    }
+   }
+  }
+ },
+ "prompt_edit": {
+  "_reading": "Payload carries the project JSON inline ({version:1, type:'prompt_edit', instruction, project, tokenHash?}) \u2014 no media upload. The worker's LLM lane returns {project, summary}; the revised project is schema-validated worker-side AND client-side before the diff preview. Output file jobs/<id>/output/revised.json holds {project, summary, lane}.",
+  "result": {
+   "summary": "Moved 3 caption clips to the top of the frame and raised their font size.",
+   "revised": "jobs/<job_id>/output/revised.json",
+   "lane": "freellmapi"
+  },
+  "failure": "status='failed' with error text (no LLM lane answered / reply failed schema validation / BYO token refused). The editor shows its error state; the project is never half-edited."
+ },
+ "replicate_analyse": {
+  "_reading": "Payload: {version:1, type:'replicate_analyse', reference: 'jobs/<id>/input/reference_<name>', raws: ['jobs/<id>/input/raw_<name>', ...]} \u2014 files uploaded BEFORE the row, same rule as every job. Output jobs/<id>/output/spec.json holds {duration, width, height, segments: [{start, end, cutType, captionText, captionStart, captionEnd, styleNote}], bpm, beats: [seconds], captions: [{start, end, text}]}. All measurements are mechanical (ffmpeg scene detection, librosa beats, faster-whisper phrases); the reference's audio/captions are never copied into a built project.",
+  "result": {
+   "spec": "jobs/<job_id>/output/spec.json",
+   "cuts": 12,
+   "bpm": 107.67
+  },
+  "failure": "status='failed' with error text (reference over the 60s cap, ffprobe failure, too many raws)."
+ }
+}
