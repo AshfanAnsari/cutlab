@@ -1,0 +1,716 @@
+[
+ {
+  "name": "valid-minimal",
+  "expectOk": true,
+  "project": {
+   "version": 1,
+   "name": "Fixture",
+   "canvas": {
+    "w": 720,
+    "h": 1280,
+    "fps": 30
+   },
+   "media": [
+    {
+     "id": "m1",
+     "src": "a.mp4",
+     "kind": "video",
+     "duration": 10
+    },
+    {
+     "id": "m2",
+     "src": "song.mp3",
+     "kind": "audio",
+     "duration": 20
+    }
+   ],
+   "tracks": [
+    {
+     "id": "v1",
+     "kind": "video",
+     "clips": [
+      {
+       "id": "c1",
+       "start": 0,
+       "media": "m1",
+       "in": 0,
+       "out": 4,
+       "speed": 1,
+       "muted": false,
+       "volume": 1,
+       "transform": {
+        "x": 0,
+        "y": 0,
+        "scale": 1,
+        "rotation": 0,
+        "opacity": 1
+       },
+       "transitionIn": null
+      }
+     ]
+    },
+    {
+     "id": "a1",
+     "kind": "audio",
+     "clips": [
+      {
+       "id": "c2",
+       "start": 0,
+       "media": "m2",
+       "in": 0,
+       "out": 8,
+       "speed": 1,
+       "volume": 1,
+       "fadeIn": 0,
+       "fadeOut": 0,
+       "transitionIn": null
+      }
+     ]
+    },
+    {
+     "id": "t1",
+     "kind": "text",
+     "clips": [
+      {
+       "id": "c3",
+       "start": 1,
+       "text": "HI",
+       "dur": 2,
+       "style": "pop-bold",
+       "transitionIn": null
+      }
+     ]
+    }
+   ],
+   "markers": [
+    {
+     "t": 1.5,
+     "label": "beat"
+    }
+   ]
+  }
+ },
+ {
+  "name": "unknown-field",
+  "expectOk": false,
+  "expectErrorIncludes": "unknown field",
+  "project": {
+   "version": 1,
+   "name": "Fixture",
+   "canvas": {
+    "w": 720,
+    "h": 1280,
+    "fps": 30
+   },
+   "media": [
+    {
+     "id": "m1",
+     "src": "a.mp4",
+     "kind": "video",
+     "duration": 10
+    },
+    {
+     "id": "m2",
+     "src": "song.mp3",
+     "kind": "audio",
+     "duration": 20
+    }
+   ],
+   "tracks": [
+    {
+     "id": "v1",
+     "kind": "video",
+     "clips": [
+      {
+       "id": "c1",
+       "start": 0,
+       "media": "m1",
+       "in": 0,
+       "out": 4,
+       "speed": 1,
+       "muted": false,
+       "volume": 1,
+       "transform": {
+        "x": 0,
+        "y": 0,
+        "scale": 1,
+        "rotation": 0,
+        "opacity": 1
+       },
+       "transitionIn": null
+      }
+     ]
+    },
+    {
+     "id": "a1",
+     "kind": "audio",
+     "clips": [
+      {
+       "id": "c2",
+       "start": 0,
+       "media": "m2",
+       "in": 0,
+       "out": 8,
+       "speed": 1,
+       "volume": 1,
+       "fadeIn": 0,
+       "fadeOut": 0,
+       "transitionIn": null
+      }
+     ]
+    },
+    {
+     "id": "t1",
+     "kind": "text",
+     "clips": [
+      {
+       "id": "c3",
+       "start": 1,
+       "text": "HI",
+       "dur": 2,
+       "style": "pop-bold",
+       "transitionIn": null
+      }
+     ]
+    }
+   ],
+   "markers": [
+    {
+     "t": 1.5,
+     "label": "beat"
+    }
+   ],
+   "bogusField": 1
+  }
+ },
+ {
+  "name": "bad-media-ref",
+  "expectOk": false,
+  "expectErrorIncludes": "media registry",
+  "project": {
+   "version": 1,
+   "name": "Fixture",
+   "canvas": {
+    "w": 720,
+    "h": 1280,
+    "fps": 30
+   },
+   "media": [
+    {
+     "id": "m1",
+     "src": "a.mp4",
+     "kind": "video",
+     "duration": 10
+    },
+    {
+     "id": "m2",
+     "src": "song.mp3",
+     "kind": "audio",
+     "duration": 20
+    }
+   ],
+   "tracks": [
+    {
+     "id": "v1",
+     "kind": "video",
+     "clips": [
+      {
+       "id": "c1",
+       "start": 0,
+       "media": "nope",
+       "in": 0,
+       "out": 4,
+       "speed": 1,
+       "muted": false,
+       "volume": 1,
+       "transform": {
+        "x": 0,
+        "y": 0,
+        "scale": 1,
+        "rotation": 0,
+        "opacity": 1
+       },
+       "transitionIn": null
+      }
+     ]
+    },
+    {
+     "id": "a1",
+     "kind": "audio",
+     "clips": [
+      {
+       "id": "c2",
+       "start": 0,
+       "media": "m2",
+       "in": 0,
+       "out": 8,
+       "speed": 1,
+       "volume": 1,
+       "fadeIn": 0,
+       "fadeOut": 0,
+       "transitionIn": null
+      }
+     ]
+    },
+    {
+     "id": "t1",
+     "kind": "text",
+     "clips": [
+      {
+       "id": "c3",
+       "start": 1,
+       "text": "HI",
+       "dur": 2,
+       "style": "pop-bold",
+       "transitionIn": null
+      }
+     ]
+    }
+   ],
+   "markers": [
+    {
+     "t": 1.5,
+     "label": "beat"
+    }
+   ]
+  }
+ },
+ {
+  "name": "duplicate-ids",
+  "expectOk": false,
+  "expectErrorIncludes": "duplicate clip id",
+  "project": {
+   "version": 1,
+   "name": "Fixture",
+   "canvas": {
+    "w": 720,
+    "h": 1280,
+    "fps": 30
+   },
+   "media": [
+    {
+     "id": "m1",
+     "src": "a.mp4",
+     "kind": "video",
+     "duration": 10
+    },
+    {
+     "id": "m2",
+     "src": "song.mp3",
+     "kind": "audio",
+     "duration": 20
+    }
+   ],
+   "tracks": [
+    {
+     "id": "v1",
+     "kind": "video",
+     "clips": [
+      {
+       "id": "c1",
+       "start": 0,
+       "media": "m1",
+       "in": 0,
+       "out": 4,
+       "speed": 1,
+       "muted": false,
+       "volume": 1,
+       "transform": {
+        "x": 0,
+        "y": 0,
+        "scale": 1,
+        "rotation": 0,
+        "opacity": 1
+       },
+       "transitionIn": null
+      },
+      {
+       "id": "c1",
+       "start": 5,
+       "media": "m1",
+       "in": 0,
+       "out": 4,
+       "speed": 1,
+       "muted": false,
+       "volume": 1,
+       "transform": {
+        "x": 0,
+        "y": 0,
+        "scale": 1,
+        "rotation": 0,
+        "opacity": 1
+       },
+       "transitionIn": null
+      }
+     ]
+    },
+    {
+     "id": "a1",
+     "kind": "audio",
+     "clips": [
+      {
+       "id": "c2",
+       "start": 0,
+       "media": "m2",
+       "in": 0,
+       "out": 8,
+       "speed": 1,
+       "volume": 1,
+       "fadeIn": 0,
+       "fadeOut": 0,
+       "transitionIn": null
+      }
+     ]
+    },
+    {
+     "id": "t1",
+     "kind": "text",
+     "clips": [
+      {
+       "id": "c3",
+       "start": 1,
+       "text": "HI",
+       "dur": 2,
+       "style": "pop-bold",
+       "transitionIn": null
+      }
+     ]
+    }
+   ],
+   "markers": [
+    {
+     "t": 1.5,
+     "label": "beat"
+    }
+   ]
+  }
+ },
+ {
+  "name": "bad-transition",
+  "expectOk": false,
+  "expectErrorIncludes": "not a known transition",
+  "project": {
+   "version": 1,
+   "name": "Fixture",
+   "canvas": {
+    "w": 720,
+    "h": 1280,
+    "fps": 30
+   },
+   "media": [
+    {
+     "id": "m1",
+     "src": "a.mp4",
+     "kind": "video",
+     "duration": 10
+    },
+    {
+     "id": "m2",
+     "src": "song.mp3",
+     "kind": "audio",
+     "duration": 20
+    }
+   ],
+   "tracks": [
+    {
+     "id": "v1",
+     "kind": "video",
+     "clips": [
+      {
+       "id": "c1",
+       "start": 0,
+       "media": "m1",
+       "in": 0,
+       "out": 4,
+       "speed": 1,
+       "muted": false,
+       "volume": 1,
+       "transform": {
+        "x": 0,
+        "y": 0,
+        "scale": 1,
+        "rotation": 0,
+        "opacity": 1
+       },
+       "transitionIn": "spin"
+      }
+     ]
+    },
+    {
+     "id": "a1",
+     "kind": "audio",
+     "clips": [
+      {
+       "id": "c2",
+       "start": 0,
+       "media": "m2",
+       "in": 0,
+       "out": 8,
+       "speed": 1,
+       "volume": 1,
+       "fadeIn": 0,
+       "fadeOut": 0,
+       "transitionIn": null
+      }
+     ]
+    },
+    {
+     "id": "t1",
+     "kind": "text",
+     "clips": [
+      {
+       "id": "c3",
+       "start": 1,
+       "text": "HI",
+       "dur": 2,
+       "style": "pop-bold",
+       "transitionIn": null
+      }
+     ]
+    }
+   ],
+   "markers": [
+    {
+     "t": 1.5,
+     "label": "beat"
+    }
+   ]
+  }
+ },
+ {
+  "name": "valid-nest",
+  "expectOk": true,
+  "project": {
+   "version": 1,
+   "name": "Fixture",
+   "canvas": {
+    "w": 720,
+    "h": 1280,
+    "fps": 30
+   },
+   "media": [
+    {
+     "id": "m1",
+     "src": "a.mp4",
+     "kind": "video",
+     "duration": 10
+    },
+    {
+     "id": "m2",
+     "src": "song.mp3",
+     "kind": "audio",
+     "duration": 20
+    }
+   ],
+   "tracks": [
+    {
+     "id": "v1",
+     "kind": "video",
+     "clips": [
+      {
+       "id": "c1",
+       "start": 0,
+       "media": "m1",
+       "in": 0,
+       "out": 4,
+       "speed": 1,
+       "muted": false,
+       "volume": 1,
+       "transform": {
+        "x": 0,
+        "y": 0,
+        "scale": 1,
+        "rotation": 0,
+        "opacity": 1
+       },
+       "transitionIn": null
+      },
+      {
+       "id": "cmp1",
+       "start": 6,
+       "in": 0,
+       "out": 2,
+       "volume": 1,
+       "transform": {
+        "x": 0,
+        "y": 0,
+        "scale": 1,
+        "rotation": 0,
+        "opacity": 1
+       },
+       "nest": {
+        "name": "Nest 1",
+        "tracks": [
+         {
+          "id": "nv1",
+          "kind": "video",
+          "clips": [
+           {
+            "id": "nc1",
+            "start": 0,
+            "media": "m1",
+            "in": 0,
+            "out": 2,
+            "speed": 1,
+            "muted": true,
+            "volume": 1,
+            "transform": {
+             "x": 0,
+             "y": 0,
+             "scale": 1,
+             "rotation": 0,
+             "opacity": 1
+            },
+            "transitionIn": null
+           }
+          ]
+         }
+        ]
+       },
+       "transitionIn": null
+      }
+     ]
+    },
+    {
+     "id": "a1",
+     "kind": "audio",
+     "clips": [
+      {
+       "id": "c2",
+       "start": 0,
+       "media": "m2",
+       "in": 0,
+       "out": 8,
+       "speed": 1,
+       "volume": 1,
+       "fadeIn": 0,
+       "fadeOut": 0,
+       "transitionIn": null
+      }
+     ]
+    },
+    {
+     "id": "t1",
+     "kind": "text",
+     "clips": [
+      {
+       "id": "c3",
+       "start": 1,
+       "text": "HI",
+       "dur": 2,
+       "style": "pop-bold",
+       "transitionIn": null
+      }
+     ]
+    }
+   ],
+   "markers": [
+    {
+     "t": 1.5,
+     "label": "beat"
+    }
+   ]
+  }
+ },
+ {
+  "name": "valid-editlog",
+  "expectOk": true,
+  "project": {
+   "version": 1,
+   "name": "Fixture",
+   "canvas": {
+    "w": 720,
+    "h": 1280,
+    "fps": 30
+   },
+   "media": [
+    {
+     "id": "m1",
+     "src": "a.mp4",
+     "kind": "video",
+     "duration": 10
+    },
+    {
+     "id": "m2",
+     "src": "song.mp3",
+     "kind": "audio",
+     "duration": 20
+    }
+   ],
+   "tracks": [
+    {
+     "id": "v1",
+     "kind": "video",
+     "clips": [
+      {
+       "id": "c1",
+       "start": 0,
+       "media": "m1",
+       "in": 0,
+       "out": 4,
+       "speed": 1,
+       "muted": false,
+       "volume": 1,
+       "transform": {
+        "x": 0,
+        "y": 0,
+        "scale": 1,
+        "rotation": 0,
+        "opacity": 1
+       },
+       "transitionIn": null
+      }
+     ]
+    },
+    {
+     "id": "a1",
+     "kind": "audio",
+     "clips": [
+      {
+       "id": "c2",
+       "start": 0,
+       "media": "m2",
+       "in": 0,
+       "out": 8,
+       "speed": 1,
+       "volume": 1,
+       "fadeIn": 0,
+       "fadeOut": 0,
+       "transitionIn": null
+      }
+     ]
+    },
+    {
+     "id": "t1",
+     "kind": "text",
+     "clips": [
+      {
+       "id": "c3",
+       "start": 1,
+       "text": "HI",
+       "dur": 2,
+       "style": "pop-bold",
+       "transitionIn": null
+      }
+     ]
+    }
+   ],
+   "markers": [
+    {
+     "t": 1.5,
+     "label": "beat"
+    }
+   ],
+   "editLog": [
+    {
+     "at": "2026-11-09T00:00:00.000Z",
+     "by": "agent",
+     "ops": [
+      "add_marker"
+     ],
+     "revision": 2
+    }
+   ]
+  }
+ }
+]
