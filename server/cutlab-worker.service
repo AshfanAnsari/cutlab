@@ -1,0 +1,18 @@
+[Unit]
+Description=CutLab server worker (polls cutlab_jobs, runs media-analysis and Lane B renders)
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/hatch/workspace/web-projects/cutlab/server
+ExecStart=/usr/bin/python3 /home/hatch/workspace/web-projects/cutlab/server/worker.py
+Restart=always
+RestartSec=5
+Environment=HOME=/home/hatch
+Environment=HTTP_PROXY=http://hatch-egress-proxy:3128
+Environment=HTTPS_PROXY=http://hatch-egress-proxy:3128
+Environment=http_proxy=http://hatch-egress-proxy:3128
+Environment=https_proxy=http://hatch-egress-proxy:3128
+
+[Install]
+WantedBy=default.target
